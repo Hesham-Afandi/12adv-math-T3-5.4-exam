@@ -1,461 +1,663 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>📐 Grade 12 Advanced Math - Definite Integrals & Applications Exam</title>
+    <title>📐 Grade 12 Advanced Math - Definite Integrals & Applications (1.4)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; }
+        body { font-family: 'Cairo', sans-serif; }
+        body.en-mode { font-family: 'Inter', sans-serif; }
         .correct { background-color: #dcfce7 !important; border-color: #16a34a !important; }
         .incorrect { background-color: #fee2e2 !important; border-color: #dc2626 !important; }
         .formula { font-family: 'Times New Roman', serif; font-style: italic; direction: ltr; display: inline-block; }
         .timer-warning { color: #dc2626 !important; animation: pulse 1s infinite; }
         @keyframes pulse { 50% { opacity: 0.7; } }
         @media print { .no-print { display: none !important; } }
-        .success-badge { 
-            display: inline-block; 
-            padding: 4px 12px; 
-            border-radius: 20px; 
-            font-weight: bold;
-            font-size: 0.875rem;
-        }
+        .success-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-weight: bold; font-size: 0.875rem; }
         .grade-excellent { background: #dcfce7; color: #166534; }
         .grade-good { background: #fef3c7; color: #92400e; }
         .grade-pass { background: #dbeafe; color: #1e40af; }
         .grade-fail { background: #fee2e2; color: #991b1b; }
+        
+        /* Language Switcher */
+        .lang-switch {
+            position: fixed; top: 16px; left: 16px; z-index: 100;
+            background: white; padding: 6px; border-radius: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15); display: flex; gap: 4px;
+            border: 2px solid #4F46E5;
+        }
+        [dir="ltr"] .lang-switch { left: auto; right: 16px; }
+        .lang-btn {
+            padding: 6px 14px; border-radius: 20px; cursor: pointer; font-weight: bold;
+            transition: all 0.3s; border: none; font-size: 0.875rem;
+            background: transparent; color: #6b7280;
+        }
+        .lang-btn.active { background: #4F46E5; color: white; box-shadow: 0 2px 6px rgba(79,70,229,0.4); }
+        .lang-btn:hover:not(.active) { background: #eef2ff; color: #4F46E5; }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 p-4 md:p-8 min-h-screen">
 
+    <!-- Language Switcher -->
+    <div class="lang-switch no-print">
+        <button class="lang-btn active" onclick="setLanguage('ar')" id="btn-ar">عربي</button>
+        <button class="lang-btn" onclick="setLanguage('en')" id="btn-en">EN</button>
+    </div>
+
     <!-- Timer -->
     <div id="timer-container" class="max-w-4xl mx-auto mb-4 text-center no-print">
         <div class="bg-white p-4 rounded-xl shadow-md inline-block border-2 border-indigo-100">
-            <span class="text-gray-600 ml-2">⏱️ Time Remaining:</span>
+            <span class="text-gray-600 ml-2" data-ar="⏱️ الوقت المتبقي:" data-en="⏱️ Time Remaining:">⏱️ الوقت المتبقي:</span>
             <span id="timer" class="text-2xl font-bold text-indigo-600 font-mono">60:00</span>
         </div>
     </div>
 
     <!-- Controls -->
     <div class="max-w-4xl mx-auto mb-6 flex flex-wrap gap-3 justify-center no-print">
-        <button onclick="toggleAnswers()" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg font-medium transition shadow cursor-pointer">
-            👁️ Show / Hide Model Answers
-        </button>
-        <button onclick="window.print()" class="bg-gray-800 hover:bg-gray-900 text-white px-5 py-2 rounded-lg font-medium transition shadow cursor-pointer">
-            🖨️ Print / Save as PDF
-        </button>
+        <button onclick="toggleAnswers()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg font-medium transition shadow cursor-pointer" data-ar="👁️ إظهار / إخفاء الإجابات" data-en="👁️ Show / Hide Answers">👁️ إظهار / إخفاء الإجابات</button>
+        <button onclick="window.print()" class="bg-gray-800 hover:bg-gray-900 text-white px-5 py-2 rounded-lg font-medium transition shadow cursor-pointer" data-ar="🖨️ طباعة / PDF" data-en="🖨️ Print / PDF">🖨️ طباعة / PDF</button>
     </div>
 
     <!-- Header -->
-    <header class="max-w-4xl mx-auto bg-white p-6 rounded-xl shadow-md mb-8 border-l-4 border-indigo-600">
+    <header class="max-w-4xl mx-auto bg-white p-6 rounded-xl shadow-md mb-8 border-r-4 border-indigo-600">
         <div class="text-center">
-            <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-2">📐 Grade 12 Advanced Mathematics</h1>
-            <h2 class="text-lg text-indigo-600 font-semibold">Unit 5.4: The Architecture of Change - Definite Integrals & Applications</h2>
+            <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-2" data-ar="📐 رياضيات الصف الثاني عشر متقدم" data-en="📐 Grade 12 Advanced Mathematics">📐 رياضيات الصف الثاني عشر متقدم</h1>
+            <h2 class="text-lg text-indigo-600 font-semibold" data-ar="الوحدة 1.4: التكاملات المحددة وتطبيقاتها" data-en="Unit 1.4: Definite Integrals & Applications">الوحدة 1.4: التكاملات المحددة وتطبيقاتها</h2>
+            <p class="text-sm text-gray-600 mt-2" data-ar="الأساسيات، الخصائص، نظرية القيمة المتوسطة، والتطبيقات" data-en="Fundamentals, Properties, Mean Value Theorem & Applications">الأساسيات، الخصائص، نظرية القيمة المتوسطة، والتطبيقات</p>
         </div>
         <div class="mt-4 flex flex-wrap justify-center gap-4 text-sm text-gray-600">
-            <span> Date: <input type="text" class="border-b border-gray-400 bg-transparent w-28 text-center"></span>
-            <span> Name: <input type="text" id="studentName" class="border-b border-gray-400 bg-transparent w-32 text-center" placeholder="Enter Name"></span>
-            <span>️ Duration: 60 min</span>
-            <span>📊 Total: 100 Marks</span>
+            <span><span data-ar="📅 التاريخ:" data-en="📅 Date:">📅 التاريخ:</span> <input type="text" class="border-b border-gray-400 bg-transparent w-28 text-center"></span>
+            <span><span data-ar="👤 الاسم:" data-en="👤 Name:">👤 الاسم:</span> <input type="text" id="studentName" class="border-b border-gray-400 bg-transparent w-32 text-center" placeholder="Enter name"></span>
+            <span><span data-ar="⏱️ المدة: 60 دقيقة" data-en="⏱️ Duration: 60 min">⏱️ المدة: 60 دقيقة</span></span>
+            <span><span data-ar="📊 المجموع: 100 درجة" data-en="📊 Total: 100 pts">📊 المجموع: 100 درجة</span></span>
         </div>
     </header>
 
-    <main class="max-w-4xl mx-auto space-y-8">
-
-        <!-- Section 1: Definite Integral Fundamentals -->
-        <section class="bg-white p-6 rounded-xl shadow-lg">
-            <h2 class="text-xl font-bold mb-4 text-indigo-700">🔹 Part 1: Definite Integral Fundamentals</h2>
-            <ol id="section1-list" class="space-y-4 text-sm">
-                <li class="border-l-4 border-indigo-500 pl-4 py-2" id="q-1">
-                    <strong>1.</strong> What does the Greek letter Σ (Sigma) and the elongated 'S' (∫) both signify in calculus?<br>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q1" value="a" class="mr-2"> a) Subtraction</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q1" value="b" class="mr-2"> b) Summation</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q1" value="c" class="mr-2"> c) Substitution</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q1" value="d" class="mr-2"> d) Simplification</label>
-                    <div class="answer-box text-green-700 mt-2 font-medium hidden">✅ Answer: b)</div>
-                </li>
-                <li class="border-l-4 border-indigo-500 pl-4 py-2" id="q-2">
-                    <strong>2.</strong> What happens to the discrete step Δx as n → ∞ in a Riemann Sum?<br>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q2" value="a" class="mr-2"> a) It increases</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q2" value="b" class="mr-2"> b) It stays constant</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q2" value="c" class="mr-2"> c) It shrinks into the continuous differential dx</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q2" value="d" class="mr-2"> d) It becomes negative</label>
-                    <div class="answer-box text-green-700 mt-2 font-medium hidden">✅ Answer: c)</div>
-                </li>
-                <li class="border-l-4 border-indigo-500 pl-4 py-2" id="q-3">
-                    <strong>3.</strong> What does a function above the x-axis yield in a definite integral?<br>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q3" value="a" class="mr-2"> a) Negative integral values</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q3" value="b" class="mr-2"> b) Positive integral values</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q3" value="c" class="mr-2"> c) Zero</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q3" value="d" class="mr-2"> d) Undefined</label>
-                    <div class="answer-box text-green-700 mt-2 font-medium hidden">✅ Answer: b)</div>
-                </li>
-                <li class="border-l-4 border-indigo-500 pl-4 py-2" id="q-4">
-                    <strong>4.</strong> What does a function dipping below the x-axis yield in a definite integral?<br>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q4" value="a" class="mr-2"> a) Positive integral values</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q4" value="b" class="mr-2"> b) Zero</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q4" value="c" class="mr-2"> c) Negative integral values</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q4" value="d" class="mr-2"> d) Undefined</label>
-                    <div class="answer-box text-green-700 mt-2 font-medium hidden">✅ Answer: c)</div>
-                </li>
-            </ol>
-        </section>
-
-        <!-- Section 2: Properties of Definite Integrals -->
-        <section class="bg-white p-6 rounded-xl shadow-lg">
-            <h2 class="text-xl font-bold mb-4 text-indigo-700">🔹 Part 2: Algebraic Properties (Cheat Sheet)</h2>
-            <ol id="section2-list" class="space-y-4 text-sm">
-                <li class="border-l-4 border-indigo-500 pl-4 py-2" id="q-5">
-                    <strong>5.</strong> What happens when you reverse the limits of integration from a to b, to b to a?<br>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q5" value="a" class="mr-2"> a) The sign stays the same</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q5" value="b" class="mr-2"> b) The sign flips (becomes negative)</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q5" value="c" class="mr-2"> c) The value becomes zero</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q5" value="d" class="mr-2"> d) The value doubles</label>
-                    <div class="answer-box text-green-700 mt-2 font-medium hidden">✅ Answer: b)</div>
-                </li>
-                <li class="border-l-4 border-indigo-500 pl-4 py-2" id="q-6">
-                    <strong>6.</strong> What is the value of ∫[a,a] f(x)dx (integrating over zero width)?<br>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q6" value="a" class="mr-2"> a) f(a)</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q6" value="b" class="mr-2"> b) 1</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q6" value="c" class="mr-2"> c) 0</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q6" value="d" class="mr-2"> d) Undefined</label>
-                    <div class="answer-box text-green-700 mt-2 font-medium hidden">✅ Answer: c)</div>
-                </li>
-                <li class="border-l-4 border-indigo-500 pl-4 py-2" id="q-7">
-                    <strong>7.</strong> According to the Constant Multiple Rule, c·f(x)dx equals:<br>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q7" value="a" class="mr-2"> a) c + ∫f(x)dx</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q7" value="b" class="mr-2"> b) c·∫f(x)dx</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q7" value="c" class="mr-2"> c) ∫f(x)dx / c</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q7" value="d" class="mr-2"> d) c·f(x)</label>
-                    <div class="answer-box text-green-700 mt-2 font-medium hidden">✅ Answer: b)</div>
-                </li>
-                <li class="border-l-4 border-indigo-500 pl-4 py-2" id="q-8">
-                    <strong>8.</strong> According to the Sum Rule, ∫[f(x) + g(x)]dx equals:<br>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q8" value="a" class="mr-2"> a) ∫f(x)dx × ∫g(x)dx</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q8" value="b" class="mr-2"> b) ∫f(x)dx + ∫g(x)dx</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q8" value="c" class="mr-2"> c) ∫[f(x)·g(x)]dx</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q8" value="d" class="mr-2"> d) f(x) + g(x)</label>
-                    <div class="answer-box text-green-700 mt-2 font-medium hidden">✅ Answer: b)</div>
-                </li>
-            </ol>
-        </section>
-
-        <!-- Section 3: Piecewise Functions & Bounding -->
-        <section class="bg-white p-6 rounded-xl shadow-lg">
-            <h2 class="text-xl font-bold mb-4 text-indigo-700"> Part 3: Piecewise Functions & Bounding Theorem</h2>
-            <ol id="section3-list" class="space-y-4 text-sm">
-                <li class="border-l-4 border-indigo-500 pl-4 py-2" id="q-9">
-                    <strong>9.</strong> When integrating a piecewise function with a jump discontinuity, what method should you use?<br>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q9" value="a" class="mr-2"> a) Ignore the discontinuity</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q9" value="b" class="mr-2"> b) Drop a cut line at the jump and calculate contiguous geometric regions</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q9" value="c" class="mr-2"> c) The function is not integrable</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q9" value="d" class="mr-2"> d) Use only the left side</label>
-                    <div class="answer-box text-green-700 mt-2 font-medium hidden">✅ Answer: b)</div>
-                </li>
-                <li class="border-l-4 border-indigo-500 pl-4 py-2" id="q-10">
-                    <strong>10.</strong> According to the Bounding Theorem, if f(x) ≥ g(x) for all x in [a,b], then:<br>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q10" value="a" class="mr-2"> a) f(x)dx ≤ ∫g(x)dx</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q10" value="b" class="mr-2"> b) ∫f(x)dx ≥ ∫g(x)dx</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q10" value="c" class="mr-2"> c) ∫f(x)dx = ∫g(x)dx</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q10" value="d" class="mr-2"> d) No relationship exists</label>
-                    <div class="answer-box text-green-700 mt-2 font-medium hidden">✅ Answer: b)</div>
-                </li>
-                <li class="border-l-4 border-indigo-500 pl-4 py-2" id="q-11">
-                    <strong>11.</strong> If a piecewise function has areas of 4 and 1 on either side of a jump, what is the total area?<br>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q11" value="a" class="mr-2"> a) 3</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q11" value="b" class="mr-2"> b) 4</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q11" value="c" class="mr-2"> c) 5</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q11" value="d" class="mr-2"> d) 1</label>
-                    <div class="answer-box text-green-700 mt-2 font-medium hidden">✅ Answer: c)</div>
-                </li>
-            </ol>
-        </section>
-
-        <!-- Section 4: Mean Value Theorem & Average Value -->
-        <section class="bg-white p-6 rounded-xl shadow-lg">
-            <h2 class="text-xl font-bold mb-4 text-indigo-700">🔹 Part 4: Mean Value Theorem & Average Value</h2>
-            <ol id="section4-list" class="space-y-4 text-sm">
-                <li class="border-l-4 border-indigo-500 pl-4 py-2" id="q-12">
-                    <strong>12.</strong> What does the Mean Value Theorem for Integrals guarantee?<br>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q12" value="a" class="mr-2"> a) The function has a maximum value</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q12" value="b" class="mr-2"> b) There exists at least one point c where f(c) equals the average value</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q12" value="c" class="mr-2"> c) The integral is always positive</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q12" value="d" class="mr-2"> d) The function is continuous</label>
-                    <div class="answer-box text-green-700 mt-2 font-medium hidden">✅ Answer: b)</div>
-                </li>
-                <li class="border-l-4 border-indigo-500 pl-4 py-2" id="q-13">
-                    <strong>13.</strong> What is the formula for the average value of f(x) on [a,b]?<br>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q13" value="a" class="mr-2"> a) (b-a)·∫f(x)dx</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q13" value="b" class="mr-2"> b) 1/(b-a) · ∫[a,b] f(x)dx</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q13" value="c" class="mr-2"> c) ∫f(x)dx / (a+b)</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q13" value="d" class="mr-2"> d) f(a) + f(b) / 2</label>
-                    <div class="answer-box text-green-700 mt-2 font-medium hidden">✅ Answer: b)</div>
-                </li>
-                <li class="border-l-4 border-indigo-500 pl-4 py-2" id="q-14">
-                    <strong>14.</strong> The lakebed metaphor explains average value as:<br>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q14" value="a" class="mr-2"> a) The deepest point of the lake</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q14" value="b" class="mr-2"> b) The height of a perfect rectangle holding the same volume of water</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q14" value="c" class="mr-2"> c) The surface area of the lake</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q14" value="d" class="mr-2"> d) The perimeter of the lake</label>
-                    <div class="answer-box text-green-700 mt-2 font-medium hidden">✅ Answer: b)</div>
-                </li>
-                <li class="border-l-4 border-indigo-500 pl-4 py-2" id="q-15">
-                    <strong>15.</strong> The Trapping Rule states: m(b-a) ≤ ∫f(x)dx ≤ M(b-a). What do m and M represent?<br>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q15" value="a" class="mr-2"> a) The minimum and maximum values of f(x) on [a,b]</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q15" value="b" class="mr-2"> b) The endpoints a and b</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q15" value="c" class="mr-2"> c) The average values</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q15" value="d" class="mr-2"> d) The derivatives at endpoints</label>
-                    <div class="answer-box text-green-700 mt-2 font-medium hidden">✅ Answer: a)</div>
-                </li>
-            </ol>
-        </section>
-
-        <!-- Section 5: Real-World Applications -->
-        <section class="bg-white p-6 rounded-xl shadow-lg">
-            <h2 class="text-xl font-bold mb-4 text-indigo-700">🔹 Part 5: Real-World Applications</h2>
-            <ol id="section5-list" class="space-y-4 text-sm">
-                <li class="border-l-4 border-indigo-500 pl-4 py-2" id="q-16">
-                    <strong>16.</strong> In Physics, integrating variable force F(t) over time yields:<br>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q16" value="a" class="mr-2"> a) Total distance</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q16" value="b" class="mr-2"> b) Total change in momentum (Impulse)</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q16" value="c" class="mr-2"> c) Total energy</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q16" value="d" class="mr-2"> d) Total acceleration</label>
-                    <div class="answer-box text-green-700 mt-2 font-medium hidden">✅ Answer: b)</div>
-                </li>
-                <li class="border-l-4 border-indigo-500 pl-4 py-2" id="q-17">
-                    <strong>17.</strong> In Thermodynamics, integrating pressure P(V) over volume change yields:<br>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q17" value="a" class="mr-2"> a) Total temperature</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q17" value="b" class="mr-2"> b) Total mechanical work</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q17" value="c" class="mr-2"> c) Total mass</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q17" value="d" class="mr-2"> d) Total entropy</label>
-                    <div class="answer-box text-green-700 mt-2 font-medium hidden">✅ Answer: b)</div>
-                </li>
-                <li class="border-l-4 border-indigo-500 pl-4 py-2" id="q-18">
-                    <strong>18.</strong> In Biology, integrating [b(t) - a(t)]dt (birth rate minus death rate) predicts:<br>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q18" value="a" class="mr-2"> a) Total food consumption</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q18" value="b" class="mr-2"> b) Net population change over time</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q18" value="c" class="mr-2"> c) Total habitat area</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q18" value="d" class="mr-2"> d) Average lifespan</label>
-                    <div class="answer-box text-green-700 mt-2 font-medium hidden">✅ Answer: b)</div>
-                </li>
-                <li class="border-l-4 border-indigo-500 pl-4 py-2" id="q-19">
-                    <strong>19.</strong> In Economics, integrating stock depletion rates calculates:<br>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q19" value="a" class="mr-2"> a) Total revenue</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q19" value="b" class="mr-2"> b) Exact average inventory for EOQ optimization</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q19" value="c" class="mr-2"> c) Total profit</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q19" value="d" class="mr-2"> d) Market share</label>
-                    <div class="answer-box text-green-700 mt-2 font-medium hidden">✅ Answer: b)</div>
-                </li>
-            </ol>
-        </section>
-
-        <!-- Section 6: The Universal Integral -->
-        <section class="bg-white p-6 rounded-xl shadow-lg">
-            <h2 class="text-xl font-bold mb-4 text-indigo-700">🔹 Part 6: The Universal Integral - Master Alignment</h2>
-            <ol id="section6-list" class="space-y-4 text-sm">
-                <li class="border-l-4 border-indigo-500 pl-4 py-2" id="q-20">
-                    <strong>20.</strong> According to the Universal Integral Table, what does ∫v(t)dt represent in Kinematics?<br>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q20" value="a" class="mr-2"> a) Total acceleration</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q20" value="b" class="mr-2"> b) Total position (displacement)</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q20" value="c" class="mr-2"> c) Total force</label>
-                    <label class="ml-4 cursor-pointer block mt-1"><input type="radio" name="q20" value="d" class="mr-2"> d) Total energy</label>
-                    <div class="answer-box text-green-700 mt-2 font-medium hidden">✅ Answer: b)</div>
-                </li>
-            </ol>
-        </section>
-
-        <!-- Submit Button -->
-        <div class="text-center no-print pb-8">
-            <button onclick="gradeExam()" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-lg px-10 py-4 rounded-xl font-bold shadow-xl transition transform hover:scale-105 cursor-pointer">
-                📝 Submit & Auto-Grade Exam
-            </button>
-        </div>
+    <main class="max-w-4xl mx-auto space-y-8" id="exam-content">
+        <!-- Questions rendered by JS -->
     </main>
+
+    <!-- Submit Button -->
+    <div class="text-center no-print pb-8 mt-8">
+        <button onclick="gradeExam()" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-lg px-10 py-4 rounded-xl font-bold shadow-xl transition transform hover:scale-105 cursor-pointer" data-ar="📝 تسليم وتصحيح الامتحان" data-en="📝 Submit & Grade Exam">📝 تسليم وتصحيح الامتحان</button>
+    </div>
 
     <!-- Results Panel -->
     <div id="results-panel" class="max-w-4xl mx-auto mt-8 bg-white p-8 rounded-2xl shadow-2xl border-t-4 border-emerald-500 hidden no-print">
-        <h2 class="text-3xl font-bold text-gray-900 mb-6 text-center">📊 Exam Results</h2>
+        <h2 class="text-3xl font-bold text-gray-900 mb-6 text-center" data-ar="📊 نتائج الامتحان" data-en="📊 Exam Results">📊 نتائج الامتحان</h2>
         <div class="grid md:grid-cols-3 gap-4 mb-6">
-            <div class="bg-blue-50 p-4 rounded-xl text-center"><p>Student Name</p><p id="res-name" class="font-bold text-xl text-indigo-700">-</p></div>
-            <div class="bg-purple-50 p-4 rounded-xl text-center"><p>Date</p><p id="res-date" class="font-bold text-xl text-purple-700">-</p></div>
-            <div class="bg-emerald-50 p-4 rounded-xl text-center"><p>Total Score</p><p id="res-total" class="font-bold text-3xl text-emerald-600">0 / 100</p></div>
+            <div class="bg-blue-50 p-4 rounded-xl text-center"><p data-ar="اسم الطالب" data-en="Student Name">اسم الطالب</p><p id="res-name" class="font-bold text-xl text-indigo-700">-</p></div>
+            <div class="bg-purple-50 p-4 rounded-xl text-center"><p data-ar="التاريخ" data-en="Date">التاريخ</p><p id="res-date" class="font-bold text-xl text-purple-700">-</p></div>
+            <div class="bg-emerald-50 p-4 rounded-xl text-center"><p data-ar="المجموع" data-en="Score">المجموع</p><p id="res-total" class="font-bold text-3xl text-emerald-600">0 / 100</p></div>
         </div>
 
-        <!-- Success Rate Badge -->
         <div class="text-center mb-6">
-            <span id="success-badge" class="success-badge grade-excellent">Excellent - 100%</span>
+            <span id="success-badge" class="success-badge grade-excellent">-</span>
             <p id="success-percent" class="text-4xl font-bold text-emerald-600 mt-2">100%</p>
-            <p class="text-sm text-gray-500">Success Rate</p>
+            <p class="text-sm text-gray-500" data-ar="نسبة النجاح" data-en="Success Rate">نسبة النجاح</p>
         </div>
 
-        <!-- Email Send Button -->
+        <div class="bg-gray-50 p-6 rounded-xl mb-6">
+            <h3 class="font-bold text-lg mb-4 text-gray-800" data-ar="📈 تفصيل الأداء حسب القسم:" data-en="📈 Performance Breakdown:">📈 تفصيل الأداء حسب القسم:</h3>
+            <div class="space-y-3">
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-700" data-ar="أساسيات التكامل المحدد" data-en="Definite Integral Fundamentals">أساسيات التكامل المحدد</span>
+                    <span id="sec1-score" class="font-bold text-indigo-600">0/4</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-700" data-ar="خصائص التكامل الجبرية" data-en="Algebraic Properties">خصائص التكامل الجبرية</span>
+                    <span id="sec2-score" class="font-bold text-indigo-600">0/4</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-700" data-ar="الدوال متعددة التعريف ونظرية التحديد" data-en="Piecewise & Bounding">الدوال متعددة التعريف ونظرية التحديد</span>
+                    <span id="sec3-score" class="font-bold text-indigo-600">0/3</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-700" data-ar="نظرية القيمة المتوسطة" data-en="Mean Value Theorem">نظرية القيمة المتوسطة</span>
+                    <span id="sec4-score" class="font-bold text-indigo-600">0/4</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-700" data-ar="التطبيقات الواقعية" data-en="Real-World Applications">التطبيقات الواقعية</span>
+                    <span id="sec5-score" class="font-bold text-indigo-600">0/4</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-700" data-ar="التكامل الشامل" data-en="Universal Integral">التكامل الشامل</span>
+                    <span id="sec6-score" class="font-bold text-indigo-600">0/1</span>
+                </div>
+            </div>
+        </div>
+
         <div class="text-center mb-6">
-            <button id="sendEmailBtn" onclick="sendResultsToEmail()" class="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white text-lg px-8 py-3 rounded-xl font-bold shadow-xl transition transform hover:scale-105 cursor-pointer">
-                📧 Send Results to Teacher
-            </button>
+            <button id="sendEmailBtn" onclick="sendResultsToEmail()" class="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white text-lg px-8 py-3 rounded-xl font-bold shadow-xl transition transform hover:scale-105 cursor-pointer" data-ar="📧 إرسال النتائج للمعلم" data-en="📧 Send Results to Teacher">📧 إرسال النتائج للمعلم</button>
             <p id="emailStatus" class="text-sm mt-2 text-center font-medium"></p>
         </div>
 
         <div class="flex gap-3 justify-center">
-            <button onclick="window.print()" class="bg-gray-700 text-white px-6 py-3 rounded-lg font-semibold">🖨️ Print Results</button>
+            <button onclick="window.print()" class="bg-gray-700 text-white px-6 py-3 rounded-lg font-semibold" data-ar="🖨️ طباعة النتائج" data-en="🖨️ Print Results">🖨️ طباعة النتائج</button>
         </div>
     </div>
 
     <footer class="max-w-4xl mx-auto mt-10 mb-8 text-center text-gray-500 text-sm no-print">
-        © Grade 12 Advanced Mathematics | Unit 5.4: The Architecture of Change | Mr. Mohammed Hesham
+        © <span data-ar="الرياضيات للصف الثاني عشر متقدم | الوحدة 1.4: التكاملات المحددة وتطبيقاتها" data-en="Grade 12 Advanced Math | Unit 1.4: Definite Integrals & Applications">الرياضيات للصف الثاني عشر متقدم | الوحدة 1.4: التكاملات المحددة وتطبيقاتها</span> | Mr. Mohammed Hesham
     </footer>
 
-    <script>
-        // ============================================================
-        // ⚠️ STEP 1: EmailJS Configuration
-        // ============================================================
-        const PUBLIC_KEY = "Rb3Lq8tXaFmc5YHUH";
-        const SERVICE_ID = "service_w15m64i";
-        const TEMPLATE_ID = "template_5b0u2tq";
-        const TARGET_EMAIL = "mohammedhesham872@gmail.com";
-        // ============================================================
-
-        (function(){ emailjs.init(PUBLIC_KEY); })();
-
-        // Timer functionality
-        let timeRemaining = 3600; // 60 minutes in seconds
-        let timerInterval;
-
-        function startTimer() {
-            document.getElementById('timer-container').style.display = 'block';
-            timerInterval = setInterval(() => {
-                timeRemaining--;
-                const minutes = Math.floor(timeRemaining / 60);
-                const seconds = timeRemaining % 60;
-                const timerEl = document.getElementById('timer');
-                timerEl.textContent = `${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
-                
-                if (timeRemaining <= 300) {
-                    timerEl.classList.add('timer-warning');
+<script>
+// ==================== EXAM DATA (BILINGUAL - 20 QUESTIONS) ====================
+const examData = {
+    sections: [
+        {
+            id: 'sec1',
+            title: { ar: '🔹 الجزء الأول: أساسيات التكامل المحدد', en: '🔹 Part 1: Definite Integral Fundamentals' },
+            questions: [
+                {
+                    q: { ar: 'ماذا يمثل الحرف اليوناني Σ (سيجما) والحرف S الممدد (∫) في التفاضل والتكامل؟', en: 'What does the Greek letter Σ (Sigma) and the elongated S (∫) both signify in calculus?' },
+                    options: [
+                        { ar: 'الطرح (Subtraction)', en: 'Subtraction' },
+                        { ar: 'الجمع (Summation)', en: 'Summation' },
+                        { ar: 'التعويض (Substitution)', en: 'Substitution' },
+                        { ar: 'التبسيط (Simplification)', en: 'Simplification' }
+                    ],
+                    correct: 1,
+                    answer: { ar: 'كلاهما يمثل عملية الجمع', en: 'Both represent summation' }
+                },
+                {
+                    q: { ar: 'ماذا يحدث للخطوة المنفصلة Δx عندما n → ∞ في مجموع ريمان؟', en: 'What happens to the discrete step Δx as n → ∞ in a Riemann Sum?' },
+                    options: [
+                        { ar: 'تزداد', en: 'It increases' },
+                        { ar: 'تبقى ثابتة', en: 'It stays constant' },
+                        { ar: 'تتقلص لتصبح التفاضل المستمر dx', en: 'It shrinks into the continuous differential dx' },
+                        { ar: 'تصبح سالبة', en: 'It becomes negative' }
+                    ],
+                    correct: 2,
+                    answer: { ar: 'Δx → dx عندما n → ∞', en: 'Δx → dx as n → ∞' }
+                },
+                {
+                    q: { ar: 'ماذا تعطي الدالة التي تقع فوق المحور x في التكامل المحدد؟', en: 'What does a function above the x-axis yield in a definite integral?' },
+                    options: [
+                        { ar: 'قيم تكامل سالبة', en: 'Negative integral values' },
+                        { ar: 'قيم تكامل موجبة', en: 'Positive integral values' },
+                        { ar: 'صفر', en: 'Zero' },
+                        { ar: 'غير معرفة', en: 'Undefined' }
+                    ],
+                    correct: 1,
+                    answer: { ar: 'المساحة فوق المحور x تعطي قيمة موجبة', en: 'Area above x-axis gives positive value' }
+                },
+                {
+                    q: { ar: 'ماذا تعطي الدالة التي تنزل تحت المحور x في التكامل المحدد؟', en: 'What does a function dipping below the x-axis yield in a definite integral?' },
+                    options: [
+                        { ar: 'قيم تكامل موجبة', en: 'Positive integral values' },
+                        { ar: 'صفر', en: 'Zero' },
+                        { ar: 'قيم تكامل سالبة', en: 'Negative integral values' },
+                        { ar: 'غير معرفة', en: 'Undefined' }
+                    ],
+                    correct: 2,
+                    answer: { ar: 'المساحة تحت المحور x تعطي قيمة سالبة', en: 'Area below x-axis gives negative value' }
                 }
-                
-                if (timeRemaining <= 0) {
-                    clearInterval(timerInterval);
-                    alert("Time's up! Your exam will be submitted automatically.");
-                    gradeExam();
+            ]
+        },
+        {
+            id: 'sec2',
+            title: { ar: '🔹 الجزء الثاني: الخصائص الجبرية', en: '🔹 Part 2: Algebraic Properties' },
+            questions: [
+                {
+                    q: { ar: 'ماذا يحدث عندما تعكس حدود التكامل من a إلى b، لتصبح من b إلى a؟', en: 'What happens when you reverse the limits of integration from a to b, to b to a?' },
+                    options: [
+                        { ar: 'تبقى الإشارة كما هي', en: 'The sign stays the same' },
+                        { ar: 'تنعكس الإشارة (تصبح سالبة)', en: 'The sign flips (becomes negative)' },
+                        { ar: 'تصبح القيمة صفراً', en: 'The value becomes zero' },
+                        { ar: 'تتضاعف القيمة', en: 'The value doubles' }
+                    ],
+                    correct: 1,
+                    answer: { ar: '∫[b,a] f(x)dx = -∫[a,b] f(x)dx', en: '∫[b,a] f(x)dx = -∫[a,b] f(x)dx' }
+                },
+                {
+                    q: { ar: 'ما هي قيمة ∫[a,a] f(x)dx (التكامل على عرض صفري)؟', en: 'What is the value of ∫[a,a] f(x)dx (integrating over zero width)?' },
+                    options: [
+                        { ar: 'f(a)', en: 'f(a)' },
+                        { ar: '1', en: '1' },
+                        { ar: '0', en: '0' },
+                        { ar: 'غير معرفة', en: 'Undefined' }
+                    ],
+                    correct: 2,
+                    answer: { ar: 'التكامل من نقطة إلى نفس النقطة يساوي صفراً', en: 'Integral from a point to itself equals zero' }
+                },
+                {
+                    q: { ar: 'وفقاً لقاعدة المضاعف الثابت، ∫c·f(x)dx يساوي:', en: 'According to the Constant Multiple Rule, ∫c·f(x)dx equals:' },
+                    options: [
+                        { ar: 'c + ∫f(x)dx', en: 'c + ∫f(x)dx' },
+                        { ar: 'c·∫f(x)dx', en: 'c·∫f(x)dx' },
+                        { ar: '∫f(x)dx / c', en: '∫f(x)dx / c' },
+                        { ar: 'c·f(x)', en: 'c·f(x)' }
+                    ],
+                    correct: 1,
+                    answer: { ar: 'الثابت يمكن إخراجه خارج التكامل', en: 'Constant can be factored out of integral' }
+                },
+                {
+                    q: { ar: 'وفقاً لقاعدة الجمع، ∫[f(x) + g(x)]dx يساوي:', en: 'According to the Sum Rule, ∫[f(x) + g(x)]dx equals:' },
+                    options: [
+                        { ar: '∫f(x)dx × ∫g(x)dx', en: '∫f(x)dx × ∫g(x)dx' },
+                        { ar: '∫f(x)dx + ∫g(x)dx', en: '∫f(x)dx + ∫g(x)dx' },
+                        { ar: '∫[f(x)·g(x)]dx', en: '∫[f(x)·g(x)]dx' },
+                        { ar: 'f(x) + g(x)', en: 'f(x) + g(x)' }
+                    ],
+                    correct: 1,
+                    answer: { ar: 'التكامل يوزع على الجمع', en: 'Integral distributes over addition' }
                 }
-            }, 1000);
-        }
-
-        function toggleAnswers() {
-            document.querySelectorAll('.answer-box').forEach(el => el.classList.toggle('hidden'));
-        }
-
-        function gradeExam() {
-            let correctCount = 0;
-            const correctAnswers = [
-                'b','c','b','c',  // Q1-4
-                'b','c','b','b',  // Q5-8
-                'b','b','c',      // Q9-11
-                'b','b','b','a',  // Q12-15
-                'b','b','b','b',  // Q16-19
-                'b'               // Q20
-            ];
-
-            for(let i=1; i<=20; i++){
-                const selected = document.querySelector(`input[name="q${i}"]:checked`);
-                const li = document.getElementById(`q-${i}`);
-                const isCorrect = selected && selected.value === correctAnswers[i-1];
-                
-                if (isCorrect) {
-                    correctCount++;
-                    li.classList.add('correct');
-                    li.classList.remove('incorrect');
-                } else {
-                    li.classList.add('incorrect');
-                    li.classList.remove('correct');
+            ]
+        },
+        {
+            id: 'sec3',
+            title: { ar: '🔹 الجزء الثالث: الدوال متعددة التعريف ونظرية التحديد', en: '🔹 Part 3: Piecewise Functions & Bounding Theorem' },
+            questions: [
+                {
+                    q: { ar: 'عند تكامل دالة متعددة التعريف بها انقطاع قفزي، ما الطريقة التي يجب استخدامها؟', en: 'When integrating a piecewise function with a jump discontinuity, what method should you use?' },
+                    options: [
+                        { ar: 'تجاهل الانقطاع', en: 'Ignore the discontinuity' },
+                        { ar: 'أسقط خط قطع عند القفزة واحسب المناطق الهندسية المتصلة', en: 'Drop a cut line at the jump and calculate contiguous geometric regions' },
+                        { ar: 'الدالة غير قابلة للتكامل', en: 'The function is not integrable' },
+                        { ar: 'استخدم الجانب الأيسر فقط', en: 'Use only the left side' }
+                    ],
+                    correct: 1,
+                    answer: { ar: 'قسم التكامل عند نقاط الانقطاع', en: 'Split integral at discontinuity points' }
+                },
+                {
+                    q: { ar: 'وفقاً لنظرية التحديد، إذا كانت f(x) ≥ g(x) لجميع x في [a,b]، فإن:', en: 'According to the Bounding Theorem, if f(x) ≥ g(x) for all x in [a,b], then:' },
+                    options: [
+                        { ar: '∫f(x)dx ≤ ∫g(x)dx', en: '∫f(x)dx ≤ ∫g(x)dx' },
+                        { ar: '∫f(x)dx ≥ ∫g(x)dx', en: '∫f(x)dx ≥ ∫g(x)dx' },
+                        { ar: '∫f(x)dx = ∫g(x)dx', en: '∫f(x)dx = ∫g(x)dx' },
+                        { ar: 'لا توجد علاقة', en: 'No relationship exists' }
+                    ],
+                    correct: 1,
+                    answer: { ar: 'التكامل يحافظ على ترتيب المتباينات', en: 'Integral preserves inequality ordering' }
+                },
+                {
+                    q: { ar: 'إذا كانت لدالة متعددة التعريف مساحات 4 و 1 على جانبي قفزة، فما المساحة الكلية؟', en: 'If a piecewise function has areas of 4 and 1 on either side of a jump, what is the total area?' },
+                    options: [
+                        { ar: '3', en: '3' },
+                        { ar: '4', en: '4' },
+                        { ar: '5', en: '5' },
+                        { ar: '1', en: '1' }
+                    ],
+                    correct: 2,
+                    answer: { ar: 'المساحة الكلية = 4 + 1 = 5', en: 'Total area = 4 + 1 = 5' }
                 }
-            }
-
-            const score = (correctCount / 20) * 100;
-            const successRate = Math.round(score);
-            
-            document.getElementById('res-total').textContent = `${Math.round(score)} / 100`;
-            document.getElementById('res-name').textContent = document.getElementById('studentName').value || 'Student';
-            document.getElementById('res-date').textContent = new Date().toLocaleDateString();
-            
-            // Update success badge
-            const badge = document.getElementById('success-badge');
-            const percent = document.getElementById('success-percent');
-            percent.textContent = `${successRate}%`;
-            
-            if(successRate >= 90) {
-                badge.textContent = 'Excellent';
-                badge.className = 'success-badge grade-excellent';
-            } else if(successRate >= 75) {
-                badge.textContent = 'Good';
-                badge.className = 'success-badge grade-good';
-            } else if(successRate >= 50) {
-                badge.textContent = 'Pass';
-                badge.className = 'success-badge grade-pass';
-            } else {
-                badge.textContent = 'Needs Improvement';
-                badge.className = 'success-badge grade-fail';
-            }
-            
-            document.getElementById('results-panel').classList.remove('hidden');
-            document.getElementById('results-panel').scrollIntoView({ behavior: 'smooth' });
-            
-            // Show email button after grading
-            document.getElementById('sendEmailBtn').classList.remove('hidden');
+            ]
+        },
+        {
+            id: 'sec4',
+            title: { ar: '🔹 الجزء الرابع: نظرية القيمة المتوسطة والقيمة المتوسطة', en: '🔹 Part 4: Mean Value Theorem & Average Value' },
+            questions: [
+                {
+                    q: { ar: 'ماذا تضمن نظرية القيمة المتوسطة للتكاملات؟', en: 'What does the Mean Value Theorem for Integrals guarantee?' },
+                    options: [
+                        { ar: 'الدالة لها قيمة عظمى', en: 'The function has a maximum value' },
+                        { ar: 'توجد نقطة واحدة على الأقل c حيث f(c) تساوي القيمة المتوسطة', en: 'There exists at least one point c where f(c) equals the average value' },
+                        { ar: 'التكامل موجب دائماً', en: 'The integral is always positive' },
+                        { ar: 'الدالة متصلة', en: 'The function is continuous' }
+                    ],
+                    correct: 1,
+                    answer: { ar: 'توجد c في [a,b] حيث f(c) = القيمة المتوسطة', en: 'There exists c in [a,b] where f(c) = average value' }
+                },
+                {
+                    q: { ar: 'ما هي صيغة القيمة المتوسطة لـ f(x) على [a,b]؟', en: 'What is the formula for the average value of f(x) on [a,b]?' },
+                    options: [
+                        { ar: '(b-a)·∫f(x)dx', en: '(b-a)·∫f(x)dx' },
+                        { ar: '1/(b-a) · ∫[a,b] f(x)dx', en: '1/(b-a) · ∫[a,b] f(x)dx' },
+                        { ar: '∫f(x)dx / (a+b)', en: '∫f(x)dx / (a+b)' },
+                        { ar: 'f(a) + f(b) / 2', en: 'f(a) + f(b) / 2' }
+                    ],
+                    correct: 1,
+                    answer: { ar: 'القيمة المتوسطة = التكامل / عرض الفترة', en: 'Average value = integral / interval width' }
+                },
+                {
+                    q: { ar: 'استعارة قاع البحيرة تشرح القيمة المتوسطة كـ:', en: 'The lakebed metaphor explains average value as:' },
+                    options: [
+                        { ar: 'أعمق نقطة في البحيرة', en: 'The deepest point of the lake' },
+                        { ar: 'ارتفاع مستطيل مثالي يحتوي على نفس حجم الماء', en: 'The height of a perfect rectangle holding the same volume of water' },
+                        { ar: 'مساحة سطح البحيرة', en: 'The surface area of the lake' },
+                        { ar: 'محيط البحيرة', en: 'The perimeter of the lake' }
+                    ],
+                    correct: 1,
+                    answer: { ar: 'المستطيل المكافئ له نفس المساحة', en: 'Equivalent rectangle has same area' }
+                },
+                {
+                    q: { ar: 'تنص قاعدة الحصر على: m(b-a) ≤ ∫f(x)dx ≤ M(b-a). ماذا تمثل m و M؟', en: 'The Trapping Rule states: m(b-a) ≤ ∫f(x)dx ≤ M(b-a). What do m and M represent?' },
+                    options: [
+                        { ar: 'القيمتان الصغرى والعظمى لـ f(x) على [a,b]', en: 'The minimum and maximum values of f(x) on [a,b]' },
+                        { ar: 'نقطتا النهاية a و b', en: 'The endpoints a and b' },
+                        { ar: 'القيم المتوسطة', en: 'The average values' },
+                        { ar: 'المشتقات عند نقاط النهاية', en: 'The derivatives at endpoints' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'm هي القيمة الصغرى و M هي القيمة العظمى', en: 'm is minimum and M is maximum' }
+                }
+            ]
+        },
+        {
+            id: 'sec5',
+            title: { ar: '🔹 الجزء الخامس: التطبيقات الواقعية', en: '🔹 Part 5: Real-World Applications' },
+            questions: [
+                {
+                    q: { ar: 'في الفيزياء، تكامل القوة المتغيرة F(t) عبر الزمن يعطي:', en: 'In Physics, integrating variable force F(t) over time yields:' },
+                    options: [
+                        { ar: 'المسافة الكلية', en: 'Total distance' },
+                        { ar: 'التغير الكلي في الزخم (الدفع)', en: 'Total change in momentum (Impulse)' },
+                        { ar: 'الطاقة الكلية', en: 'Total energy' },
+                        { ar: 'التسارع الكلي', en: 'Total acceleration' }
+                    ],
+                    correct: 1,
+                    answer: { ar: '∫F(t)dt = الدفع = التغير في الزخم', en: '∫F(t)dt = Impulse = change in momentum' }
+                },
+                {
+                    q: { ar: 'في الديناميكا الحرارية، تكامل الضغط P(V) عبر تغير الحجم يعطي:', en: 'In Thermodynamics, integrating pressure P(V) over volume change yields:' },
+                    options: [
+                        { ar: 'درجة الحرارة الكلية', en: 'Total temperature' },
+                        { ar: 'الشغل الميكانيكي الكلي', en: 'Total mechanical work' },
+                        { ar: 'الكتلة الكلية', en: 'Total mass' },
+                        { ar: 'الإنتروبيا الكلية', en: 'Total entropy' }
+                    ],
+                    correct: 1,
+                    answer: { ar: '∫P(V)dV = الشغل الميكانيكي', en: '∫P(V)dV = mechanical work' }
+                },
+                {
+                    q: { ar: 'في علم الأحياء، تكامل [b(t) - a(t)]dt (معدل المواليد - معدل الوفيات) يتنبأ بـ:', en: 'In Biology, integrating [b(t) - a(t)]dt (birth rate minus death rate) predicts:' },
+                    options: [
+                        { ar: 'إجمالي استهلاك الغذاء', en: 'Total food consumption' },
+                        { ar: 'التغير الصافي في السكان عبر الزمن', en: 'Net population change over time' },
+                        { ar: 'إجمالي مساحة الموطن', en: 'Total habitat area' },
+                        { ar: 'متوسط العمر المتوقع', en: 'Average lifespan' }
+                    ],
+                    correct: 1,
+                    answer: { ar: 'التكامل يعطي التغير الصافي في عدد السكان', en: 'Integral gives net population change' }
+                },
+                {
+                    q: { ar: 'في الاقتصاد، تكامل معدلات نضوب المخزون يحسب:', en: 'In Economics, integrating stock depletion rates calculates:' },
+                    options: [
+                        { ar: 'إجمالي الإيرادات', en: 'Total revenue' },
+                        { ar: 'متوسط المخزون الدقيق لتحسين EOQ', en: 'Exact average inventory for EOQ optimization' },
+                        { ar: 'إجمالي الربح', en: 'Total profit' },
+                        { ar: 'حصة السوق', en: 'Market share' }
+                    ],
+                    correct: 1,
+                    answer: { ar: 'التكامل يعطي متوسط المخزون الدقيق', en: 'Integral gives exact average inventory' }
+                }
+            ]
+        },
+        {
+            id: 'sec6',
+            title: { ar: '🔹 الجزء السادس: التكامل الشامل', en: '🔹 Part 6: The Universal Integral' },
+            questions: [
+                {
+                    q: { ar: 'وفقاً لجدول التكامل الشامل، ماذا يمثل ∫v(t)dt في علم الحركة؟', en: 'According to the Universal Integral Table, what does ∫v(t)dt represent in Kinematics?' },
+                    options: [
+                        { ar: 'التسارع الكلي', en: 'Total acceleration' },
+                        { ar: 'الموضع الكلي (الإزاحة)', en: 'Total position (displacement)' },
+                        { ar: 'القوة الكلية', en: 'Total force' },
+                        { ar: 'الطاقة الكلية', en: 'Total energy' }
+                    ],
+                    correct: 1,
+                    answer: { ar: '∫v(t)dt = الإزاحة = التغير في الموضع', en: '∫v(t)dt = displacement = change in position' }
+                }
+            ]
         }
+    ]
+};
 
-        function sendResultsToEmail() {
-            const btn = document.getElementById('sendEmailBtn');
-            const status = document.getElementById('emailStatus');
-            btn.disabled = true;
-            btn.textContent = ' Sending...';
+// ==================== STATE ====================
+let currentLang = 'ar';
+let timeRemaining = 3600;
+let timerInterval;
 
-            const name = document.getElementById('studentName').value || 'N/A';
-            const date = document.querySelector('input[type="text"]').value || new Date().toLocaleDateString();
-            const score = document.getElementById('res-total').textContent;
-            const successRate = document.getElementById('success-percent').textContent;
+// ==================== LANGUAGE SWITCHER ====================
+function setLanguage(lang) {
+    currentLang = lang;
+    document.documentElement.lang = lang;
+    document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+    
+    document.getElementById('btn-ar').classList.toggle('active', lang === 'ar');
+    document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+    
+    document.body.classList.toggle('en-mode', lang === 'en');
+    
+    document.querySelectorAll('[data-ar][data-en]').forEach(el => {
+        el.textContent = el.getAttribute(`data-${lang}`);
+    });
+    
+    renderExam();
+}
 
-            let answersHTML = `<table style="border:1px solid #e5e7eb; border-collapse:collapse; width:100%; font-family:'Inter', sans-serif; font-size:14px;">
-                <tr style="background:#4F46E5; color:white;"><th style="border:1px solid #e5e7eb; padding:8px;">Q#</th><th style="border:1px solid #e5e7eb; padding:8px;">Selected</th><th style="border:1px solid #e5e7eb; padding:8px;">Status</th></tr>`;
+// ==================== RENDER EXAM ====================
+function renderExam() {
+    const container = document.getElementById('exam-content');
+    const labels = {
+        ar: { option: ['أ', 'ب', 'ج', 'د'], answer: '✅ الإجابة:' },
+        en: { option: ['a', 'b', 'c', 'd'], answer: '✅ Answer:' }
+    };
+    const lbl = labels[currentLang];
+    const isRTL = currentLang === 'ar';
+    
+    let html = '';
+    let globalIdx = 0;
+    examData.sections.forEach((section, sIdx) => {
+        html += `
+        <section class="bg-white p-6 rounded-xl shadow-lg">
+            <h2 class="text-xl font-bold mb-4 text-indigo-700">${section.title[currentLang]}</h2>
+            <ol id="section-${sIdx}-list" class="space-y-4 text-sm">`;
             
-            const correctAnswers = ['b','c','b','c','b','c','b','b','b','b','c','b','b','b','a','b','b','b','b','b'];
+        section.questions.forEach((q, qIdx) => {
+            const qNum = globalIdx + 1;
+            const borderSide = isRTL ? 'border-r-4 pr-4' : 'border-l-4 pl-4';
+            html += `
+                <li class="${borderSide} border-indigo-500 py-2" id="q-${qNum}">
+                    <strong>${qNum}.</strong> ${q.q[currentLang]}<br>`;
+                    
+            q.options.forEach((opt, oIdx) => {
+                const radioSide = isRTL ? 'mr-4 ml-2' : 'ml-4 mr-2';
+                const optLetter = String.fromCharCode(97 + oIdx);
+                html += `
+                    <label class="cursor-pointer block mt-1 ${isRTL ? 'mr-4' : 'ml-4'}">
+                        <input type="radio" name="q${qNum}" value="${optLetter}" class="${radioSide}"> 
+                        ${lbl.option[oIdx]}) ${opt[currentLang]}
+                    </label>`;
+            });
             
-            for(let i=1; i<=20; i++) {
-                const sel = document.querySelector(`input[name="q${i}"]:checked`);
-                const isCorrect = sel && sel.value === correctAnswers[i-1];
-                answersHTML += `<tr><td style="border:1px solid #e5e7eb; padding:6px;">${i}</td><td style="border:1px solid #e5e7eb; padding:6px;">${sel ? sel.value.toUpperCase() : '-'}</td><td style="border:1px solid #e5e7eb; padding:6px; color:${isCorrect ? 'green' : 'red'}">${isCorrect ? '✅ Correct' : '❌ Incorrect'}</td></tr>`;
-            }
-            answersHTML += '</table>';
+            html += `
+                    <div class="answer-box text-green-700 mt-2 font-medium hidden">
+                        ${lbl.answer} ${lbl.option[q.correct]}) ${q.options[q.correct][currentLang]} — ${q.answer[currentLang]}
+                    </div>
+                </li>`;
+            globalIdx++;
+        });
+        
+        html += `
+            </ol>
+        </section>`;
+    });
+    
+    container.innerHTML = html;
+}
 
-            const templateParams = {
-                to_email: TARGET_EMAIL,
-                student_name: name,
-                exam_date: date,
-                total_score: score,
-                success_rate: successRate,
-                answers_table: answersHTML
-            };
-
-            emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams)
-                .then(() => {
-                    status.textContent = '✅ Sent successfully! Check your Gmail.';
-                    status.style.color = '#059669';
-                    btn.textContent = '✓ Sent';
-                })
-                .catch(err => {
-                    status.textContent = '❌ Failed. Check console or setup.';
-                    status.style.color = '#dc2626';
-                    btn.disabled = false;
-                    btn.textContent = '📧 Retry Send';
-                    console.error('EmailJS Error:', err);
-                });
+// ==================== TIMER ====================
+function startTimer() {
+    document.getElementById('timer-container').style.display = 'block';
+    timerInterval = setInterval(() => {
+        timeRemaining--;
+        const minutes = Math.floor(timeRemaining / 60);
+        const seconds = timeRemaining % 60;
+        const timerEl = document.getElementById('timer');
+        timerEl.textContent = `${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
+        if (timeRemaining <= 300) timerEl.classList.add('timer-warning');
+        if (timeRemaining <= 0) {
+            clearInterval(timerInterval);
+            alert(currentLang === 'ar' ? "انتهى الوقت! سيتم تسليم الامتحان تلقائياً." : "Time's up! Exam will be submitted automatically.");
+            gradeExam();
         }
+    }, 1000);
+}
 
-        // Initialize timer on page load
-        window.addEventListener('DOMContentLoaded', startTimer);
-    </script>
+function toggleAnswers() {
+    document.querySelectorAll('.answer-box').forEach(el => el.classList.toggle('hidden'));
+}
+
+// ==================== GRADING ====================
+function gradeExam() {
+    let correctCount = 0;
+    const correctAnswersLetters = [
+        'b','c','b','c',  // Q1-4: Fundamentals
+        'b','c','b','b',  // Q5-8: Properties
+        'b','b','c',      // Q9-11: Piecewise
+        'b','b','b','a',  // Q12-15: Mean Value
+        'b','b','b','b',  // Q16-19: Applications
+        'b'               // Q20: Universal
+    ];
+    
+    let sec1 = 0, sec2 = 0, sec3 = 0, sec4 = 0, sec5 = 0, sec6 = 0;
+    
+    for (let i = 1; i <= 20; i++) {
+        const selected = document.querySelector(`input[name="q${i}"]:checked`);
+        const li = document.getElementById(`q-${i}`);
+        const isCorrect = selected && selected.value === correctAnswersLetters[i-1];
+        
+        if (isCorrect) {
+            correctCount++;
+            li.classList.add('correct');
+            li.classList.remove('incorrect');
+            if (i <= 4) sec1++;
+            else if (i <= 8) sec2++;
+            else if (i <= 11) sec3++;
+            else if (i <= 15) sec4++;
+            else if (i <= 19) sec5++;
+            else sec6++;
+        } else {
+            li.classList.add('incorrect');
+            li.classList.remove('correct');
+        }
+    }
+
+    const score = (correctCount / 20) * 100;
+    const successRate = Math.round(score);
+    
+    document.getElementById('res-total').textContent = `${Math.round(score)} / 100`;
+    document.getElementById('res-name').textContent = document.getElementById('studentName').value || (currentLang === 'ar' ? 'طالب' : 'Student');
+    document.getElementById('res-date').textContent = new Date().toLocaleDateString(currentLang === 'ar' ? 'ar-AE' : 'en-US');
+    
+    document.getElementById('sec1-score').textContent = `${sec1}/4`;
+    document.getElementById('sec2-score').textContent = `${sec2}/4`;
+    document.getElementById('sec3-score').textContent = `${sec3}/3`;
+    document.getElementById('sec4-score').textContent = `${sec4}/4`;
+    document.getElementById('sec5-score').textContent = `${sec5}/4`;
+    document.getElementById('sec6-score').textContent = `${sec6}/1`;
+    
+    const badge = document.getElementById('success-badge');
+    const percent = document.getElementById('success-percent');
+    percent.textContent = `${successRate}%`;
+    
+    if (currentLang === 'ar') {
+        if (successRate >= 90) { badge.textContent = 'ممتاز'; badge.className = 'success-badge grade-excellent'; }
+        else if (successRate >= 75) { badge.textContent = 'جيد جداً'; badge.className = 'success-badge grade-good'; }
+        else if (successRate >= 50) { badge.textContent = 'جيد'; badge.className = 'success-badge grade-pass'; }
+        else { badge.textContent = 'يحتاج تحسين'; badge.className = 'success-badge grade-fail'; }
+    } else {
+        if (successRate >= 90) { badge.textContent = 'Excellent'; badge.className = 'success-badge grade-excellent'; }
+        else if (successRate >= 75) { badge.textContent = 'Very Good'; badge.className = 'success-badge grade-good'; }
+        else if (successRate >= 50) { badge.textContent = 'Good'; badge.className = 'success-badge grade-pass'; }
+        else { badge.textContent = 'Needs Improvement'; badge.className = 'success-badge grade-fail'; }
+    }
+    
+    document.getElementById('results-panel').classList.remove('hidden');
+    document.getElementById('results-panel').scrollIntoView({ behavior: 'smooth' });
+    document.getElementById('sendEmailBtn').classList.remove('hidden');
+}
+
+// ==================== EMAIL ====================
+function sendResultsToEmail() {
+    const btn = document.getElementById('sendEmailBtn');
+    const status = document.getElementById('emailStatus');
+    btn.disabled = true;
+    btn.textContent = currentLang === 'ar' ? '⏳ جاري الإرسال...' : '⏳ Sending...';
+
+    const name = document.getElementById('studentName').value || 'N/A';
+    const date = document.querySelector('input[type="text"]').value || new Date().toLocaleDateString(currentLang === 'ar' ? 'ar-AE' : 'en-US');
+    const score = document.getElementById('res-total').textContent;
+    const successRate = document.getElementById('success-percent').textContent;
+    const sec1 = document.getElementById('sec1-score').textContent;
+    const sec2 = document.getElementById('sec2-score').textContent;
+    const sec3 = document.getElementById('sec3-score').textContent;
+    const sec4 = document.getElementById('sec4-score').textContent;
+    const sec5 = document.getElementById('sec5-score').textContent;
+    const sec6 = document.getElementById('sec6-score').textContent;
+
+    const dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+    const font = currentLang === 'ar' ? 'Cairo' : 'Inter';
+    
+    const sectionNames = {
+        ar: ['أساسيات التكامل المحدد', 'الخصائص الجبرية', 'الدوال متعددة التعريف', 'نظرية القيمة المتوسطة', 'التطبيقات الواقعية', 'التكامل الشامل'],
+        en: ['Definite Integral Fundamentals', 'Algebraic Properties', 'Piecewise & Bounding', 'Mean Value Theorem', 'Real-World Applications', 'Universal Integral']
+    };
+    const sn = sectionNames[currentLang];
+
+    let answersHTML = `<div dir="${dir}" style="font-family: '${font}', sans-serif;">
+        <h3 style="color:#4F46E5;">📊 ${currentLang === 'ar' ? 'تفصيل الأداء - امتحان التكاملات المحددة (1.4)' : 'Performance Details - Definite Integrals Exam (1.4)'}:</h3>
+        <p><strong>${currentLang === 'ar' ? 'الطالب' : 'Student'}:</strong> ${name}</p>
+        <ul>
+            <li>${sn[0]}: ${sec1}</li>
+            <li>${sn[1]}: ${sec2}</li>
+            <li>${sn[2]}: ${sec3}</li>
+            <li>${sn[3]}: ${sec4}</li>
+            <li>${sn[4]}: ${sec5}</li>
+            <li>${sn[5]}: ${sec6}</li>
+        </ul>
+        <table style="border:1px solid #e5e7eb; border-collapse:collapse; width:100%; font-size:14px; direction: ${dir};">
+        <tr style="background:#4F46E5; color:white;"><th style="border:1px solid #e5e7eb; padding:8px;">${currentLang === 'ar' ? 'السؤال' : 'Q#'}</th><th style="border:1px solid #e5e7eb; padding:8px;">${currentLang === 'ar' ? 'الإجابة المختارة' : 'Selected'}</th><th style="border:1px solid #e5e7eb; padding:8px;">${currentLang === 'ar' ? 'الحالة' : 'Status'}</th></tr>`;
+    
+    const correctAnswersLetters = ['b','c','b','c','b','c','b','b','b','b','c','b','b','b','a','b','b','b','b','b'];
+    
+    for (let i = 1; i <= 20; i++) {
+        const sel = document.querySelector(`input[name="q${i}"]:checked`);
+        const isCorrect = sel && sel.value === correctAnswersLetters[i-1];
+        answersHTML += `<tr><td style="border:1px solid #e5e7eb; padding:6px;">${i}</td><td style="border:1px solid #e5e7eb; padding:6px;">${sel ? sel.value.toUpperCase() : '-'}</td><td style="border:1px solid #e5e7eb; padding:6px; color:${isCorrect ? 'green' : 'red'}">${isCorrect ? '✅ ' + (currentLang === 'ar' ? 'صحيح' : 'Correct') : '❌ ' + (currentLang === 'ar' ? 'خطأ' : 'Wrong')}</td></tr>`;
+    }
+    answersHTML += '</table></div>';
+
+    const PUBLIC_KEY = "Rb3Lq8tXaFmc5YHUH";
+    const SERVICE_ID = "service_w15m64i";
+    const TEMPLATE_ID = "template_5b0u2tq";
+    const TARGET_EMAIL = "mohammedhesham872@gmail.com";
+
+    emailjs.init(PUBLIC_KEY);
+    const templateParams = {
+        to_email: TARGET_EMAIL,
+        student_name: name,
+        exam_date: date,
+        total_score: score,
+        success_rate: successRate,
+        answers_table: answersHTML
+    };
+
+    emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams)
+        .then(() => {
+            status.textContent = currentLang === 'ar' ? '✅ تم الإرسال بنجاح! تحقق من Gmail.' : '✅ Sent successfully! Check Gmail.';
+            status.style.color = '#059669';
+            btn.textContent = currentLang === 'ar' ? '✓ تم الإرسال' : '✓ Sent';
+        })
+        .catch(err => {
+            status.textContent = currentLang === 'ar' ? '❌ فشل الإرسال. تحقق من الإعدادات.' : '❌ Failed to send. Check settings.';
+            status.style.color = '#dc2626';
+            btn.disabled = false;
+            btn.textContent = currentLang === 'ar' ? '📧 إعادة المحاولة' : '📧 Retry';
+            console.error('EmailJS Error:', err);
+        });
+}
+
+// Initialize
+window.addEventListener('DOMContentLoaded', () => {
+    renderExam();
+    startTimer();
+});
+</script>
 </body>
 </html>
